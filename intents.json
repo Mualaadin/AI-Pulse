@@ -3,7 +3,7 @@
 		{
 			"tag": "greeting",
 			"patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day", "Whats up", "Hey", "greetings"],
-			"responses": ["Hello!", "Good to see you again!", "Hi there, how can I help?"]
+			"responses": ["Hello! I'm AI Pulse, how can I help you today?", "Good to see you again! I'm AI Pulse, what can I do for you?", "Hi there! I'm AI Pulse, how can I assist you?"]
 		},
 		{
 			"tag": "goodbye",
@@ -25,6 +25,13 @@
 			"tag": "stocks",
 			"patterns": ["What are my stocks?", "Which stocks do I own?", "Show my stock portfolio"],
 			"responses": ["Here are your stocks!"]
+		},
+
+		{
+	"tag": "name",
+	"patterns": ["What's your name?", "What's your Identity name?", "Who are you?", "What should I call you?", "What is your name?", "Tell me your name", "What do you call yourself?", "What are you called?", "Who am I talking to?", "What's your identity?", "Introduce yourself", "What can I call you?", "Your name please", "Name?", "Who is this?", "What is your identity name?"],
+	"responses": ["I'm AI Pulse, your friendly chatbot assistant!", "You can call me AI Pulse!", "I'm AI Pulse - here to help you!", "My name is AI Pulse!", "I am AI Pulse!", "AI Pulse is my name!", "Call me AI Pulse!"]
 		}
+
 	]
 }
