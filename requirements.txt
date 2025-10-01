@@ -1,0 +1,55 @@
+## requirements
+```txt
+torch>=2.0.0
+nltk>=3.8.0
+numpy>=1.24.0
+```
+
+## How to create and use it:
+
+### Step 1: Create the file
+1. In VS Code, right-click in the Explorer panel
+2. Select **New File**
+3. Name it `requirements.txt`
+4. Paste the content above
+
+### Step 2: Install dependencies using the file
+```bash
+pip install -r requirements.txt
+```
+
+## Alternative: Generate from current environment
+If you want to generate requirements from your already installed packages:
+```bash
+pip freeze > requirements.txt
+```
+
+## Detailed explanation of each dependency:
+
+- **torch>=2.0.0**: PyTorch for neural network model and training
+- **nltk>=3.8.0**: Natural Language Toolkit for text processing and tokenization
+- **numpy>=1.24.0**: Numerical computing for array operations and data handling
+
+## Complete file structure with requirements.txt:
+```
+AI-Pulse/
+├── main.py
+├── intents.json
+├── chatbot_model.pth
+├── dimensions.json
+├── requirements.txt    
+└── README.md
+```
+
+## Installation instructions for users:
+```bash
+# Clone the repository
+git clone https://github.com/Mualaadin/AI-Pulse.git
+cd AI-Pulse
+
+# Install all dependencies
+pip install -r requirements.txt
+
+# Run the chatbot
+python main.py
+```
