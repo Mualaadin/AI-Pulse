@@ -1,21 +1,16 @@
 import os
 import json
 import random
-
 import nltk
 import numpy as np
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
-
-# Download required NLTK data (run once)
+# Download required NLTK data
 nltk.download('punkt', quiet=True)
 nltk.download('wordnet', quiet=True)
-
 
 class ChatbotModel(nn.Module):
     def __init__(self, input_size, output_size):
@@ -33,7 +28,6 @@ class ChatbotModel(nn.Module):
         x = self.dropout(x)
         x = self.fc3(x)
         return x
-
 
 class ChatbotAssistant:
     def __init__(self, intents_path, function_mappings=None):
@@ -100,6 +94,7 @@ class ChatbotAssistant:
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(self.model.parameters(), lr=lr)
 
+        print(f"Training model with {len(self.intents)} intents and {self.X.shape[1]} vocabulary words...")
         for epoch in range(epochs):
             total_loss = 0.0
             for batch_X, batch_y in loader:
@@ -110,23 +105,33 @@ class ChatbotAssistant:
                 optimizer.step()
                 total_loss += loss.item()
             avg_loss = total_loss / len(loader)
-            print(f"Epoch {epoch + 1}/{epochs}, Loss: {avg_loss:.4f}")
+            if (epoch + 1) % 20 == 0:
+                print(f"Epoch {epoch + 1}/{epochs}, Loss: {avg_loss:.4f}")
+
+        print("Training completed!")
 
     def save_model(self, model_path, dimensions_path):
         torch.save(self.model.state_dict(), model_path)
         with open(dimensions_path, 'w', encoding='utf-8') as f:
             json.dump({
                 'input_size': self.X.shape[1],
-                'output_size': len(self.intents)
+                'output_size': len(self.intents),
+                'vocabulary': self.vocabulary,
+                'intents': self.intents
             }, f)
+        print(f"Model saved to {model_path}")
 
     def load_model(self, model_path, dimensions_path):
         with open(dimensions_path, 'r', encoding='utf-8') as f:
             dims = json.load(f)
 
+        self.vocabulary = dims['vocabulary']
+        self.intents = dims['intents']
+        
         self.model = ChatbotModel(dims['input_size'], dims['output_size'])
         self.model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu'), weights_only=True))
         self.model.eval()
+        print(f"Model loaded from {model_path}")
 
     def process_message(self, message):
         words = self.tokenize_and_lemmatize(message)
@@ -146,32 +151,31 @@ class ChatbotAssistant:
         responses = self.intents_responses.get(intent_tag, ["Sorry, I don't understand."])
         return random.choice(responses)
 
-
-# Example function
 def get_stocks():
     stocks = ['AAPL', 'META', 'NVDA', 'GS', 'MSFT']
     selected = random.sample(stocks, min(3, len(stocks)))
     print("Your stocks:", ", ".join(selected))
-
 
 if __name__ == '__main__':
     INTENTS_FILE = 'intents.json'
     MODEL_FILE = 'chatbot_model.pth'
     DIMS_FILE = 'dimensions.json'
 
-    # Option 1: Train and save (uncomment to retrain)
-    # assistant = ChatbotAssistant(INTENTS_FILE, {'stocks': get_stocks})
-    # assistant.parse_intents()
-    # assistant.prepare_data()
-    # assistant.train_model(epochs=200)
-    # assistant.save_model(MODEL_FILE, DIMS_FILE)
+    # TRAIN NEW MODEL (uncomment this block to retrain)
+   # print("=== TRAINING NEW MODEL ===")
+   # assistant = ChatbotAssistant(INTENTS_FILE, {'stocks': get_stocks})
+   # assistant.parse_intents()
+   # assistant.prepare_data()
+   # assistant.train_model(epochs=300)
+   # assistant.save_model(MODEL_FILE, DIMS_FILE)
 
-    # Option 2: Load and run
+   # LOAD EXISTING MODEL (comment the above and uncomment below to use existing model)
+    print("=== LOADING EXISTING MODEL ===")
     assistant = ChatbotAssistant(INTENTS_FILE, {'stocks': get_stocks})
-    assistant.parse_intents()  # Needed to load intents_responses
+    assistant.parse_intents()  # Still need this for responses
     assistant.load_model(MODEL_FILE, DIMS_FILE)
 
-    print("AI Pulse is ready! Type '/quit' to exit.")
+    print("\nAI Pulse is ready! Type '/quit' to exit.")
     while True:
         user_input = input("You: ").strip()
         if user_input == '/quit':
